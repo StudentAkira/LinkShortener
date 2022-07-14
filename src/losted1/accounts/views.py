@@ -1,7 +1,7 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 
@@ -11,7 +11,10 @@ from accounts.serializers import CustomUserSerializer
 
 class LoginView(APIView):
     def get(self, request):
-       return render(request=request, template_name='login/login.html')
+        if not request.user.is_authenticated:
+            return render(request=request, template_name='login/login.html')
+        return redirect('/shortege/')
+
 
     def post(self, request):
         username = request.POST.dict()['username']
@@ -24,9 +27,21 @@ class LoginView(APIView):
         return redirect('/login/')
 
 
+class LogoutView(APIView):
+
+    def get(self, request):
+        logout(request=request)
+        return redirect('/login/')
+
+
+
+
 class RegistrateView(APIView):
     def get(self, request):
-       return render(request=request, template_name='registrate/registrate.html')
+        if not request.user.is_authenticated:
+            return render(request=request, template_name='registrate/registrate.html')
+        return redirect('/shortege/')
+
 
     def post(self, request):
 
@@ -43,6 +58,9 @@ class RegistrateView(APIView):
 
 
 class ShortegeView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         return render(request=request, template_name='shortege/shortege.html', context={'username': request.user.username})
 
