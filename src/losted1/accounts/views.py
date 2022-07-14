@@ -1,7 +1,9 @@
+import requests
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
@@ -14,7 +16,6 @@ class LoginView(APIView):
         if not request.user.is_authenticated:
             return render(request=request, template_name='login/login.html')
         return redirect('/shortege/')
-
 
     def post(self, request):
         username = request.POST.dict()['username']
@@ -34,14 +35,11 @@ class LogoutView(APIView):
         return redirect('/login/')
 
 
-
-
 class RegistrateView(APIView):
     def get(self, request):
         if not request.user.is_authenticated:
             return render(request=request, template_name='registrate/registrate.html')
         return redirect('/shortege/')
-
 
     def post(self, request):
 
@@ -64,3 +62,11 @@ class ShortegeView(APIView):
     def get(self, request):
         return render(request=request, template_name='shortege/shortege.html', context={'username': request.user.username})
 
+
+class ShowAvatarView(APIView):
+    def get(self, request):
+        user = request.user
+        social = user.social_auth.get(provider='vk-oauth2')
+        access_token = social.extra_data['access_token']
+        response = requests.get(f'https://api.vk.com/method/users.get?fields=photo_100&v=5.131&access_token={access_token}')
+        return Response({'user': response.json()})
