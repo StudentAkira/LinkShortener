@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from accounts.views import LoginView, RegistrateView, ShortegeView, LogoutView, ShowAvatarView
+from accounts.views import LoginView, RegistrateView, ShortegeView, LogoutView, ShowAvatarView, NewUrl
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,4 +14,5 @@ urlpatterns = [
     path('shortege/', ShortegeView.as_view()),
 
     path('showavatar/', ShowAvatarView.as_view()),
+    path('test/', NewUrl.as_view()),
 ]

@@ -5,6 +5,16 @@
     <title>Shortege</title>
 </head>
 <body>
-    <h1>I am {{ username }}</h1>
+
+    <img src={{ photo }}>
+    <h1>I am {{ username }}</h1><br>
+    <form action="" method="POST" >
+        {{ csrf }}
+        Long URL : <input name="long_url" type="url">
+        <button type="submit">Cut this</button>
+        {% if short_url %}
+        Short URL : {{ short_url }}
+        {% endif %}
+    </form>
 </body>
 </html>

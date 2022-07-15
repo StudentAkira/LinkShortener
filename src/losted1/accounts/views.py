@@ -1,6 +1,7 @@
 import requests
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +9,8 @@ from rest_framework.views import APIView
 
 
 # Create your views here.
-from accounts.serializers import CustomUserSerializer
+from accounts.models import ShortedLink
+from accounts.serializers import CustomUserSerializer, UrlSerializer
 
 
 class LoginView(APIView):
@@ -57,16 +59,71 @@ class RegistrateView(APIView):
 
 class ShortegeView(APIView):
 
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        user = request.user
+        '''
+        try:
+            social = user.social_auth.get(provider='vk-oauth2')
+            access_token = social.extra_data['access_token']
+            response = requests.get(
+                f'https://api.vk.com/method/users.get?fields=photo_100&v=5.131&access_token={access_token}')
+            return render(request=request, template_name='shortege/shortege.html',
+                          context={'username': request.user.username,
+                                   'photo': response.json()['response'][0]['photo_100']})
+        except:
+        '''
         return render(request=request, template_name='shortege/shortege.html', context={'username': request.user.username})
 
+    def post(self, request):
+        Response({'test': 'test'})
+        '''
+        try:
+            url = ShortedLink.objects.get(long_url=request.POST.dict()['long_url'])
+            return Response({'url': url.short_url})
+
+        except ObjectDoesNotExist:
+
+            data = {
+                'long_url': 'https://www.youtube.com/watch?v=vBwD30q9Q_I2',
+                'short_url': 'https://www.youtube.com/watch?v=vBwD30q9Q_I',
+                # first fill this param with long url value. then, after creating raw in db - create this value using row`s id in db
+            }
+
+            new_url_serializer = UrlSerializer(data=data)
+            new_url_serializer.is_valid()
+            new_url_serializer.create(validated_data=new_url_serializer.validated_data)
+            new_url_db = ShortedLink.objects.get(long_url=data['long_url'])
+            new_url_db.cut(urlid=new_url_db.id)
+            new_url_db.users.add(request.user)
+            new_url_db.save()
+            return Response({'url': 'data'})
+        '''
 
 class ShowAvatarView(APIView):
+
     def get(self, request):
         user = request.user
         social = user.social_auth.get(provider='vk-oauth2')
         access_token = social.extra_data['access_token']
         response = requests.get(f'https://api.vk.com/method/users.get?fields=photo_100&v=5.131&access_token={access_token}')
         return Response({'user': response.json()})
+
+
+class NewUrl(APIView):
+    def get(self, request):
+        url = ShortedLink.objects.get(long_url=request.POST.dict()['long_url'])
+        data = {
+            'long_url': 'https://www.youtube.com/watch?v=vBwD30q9Q_I2',
+            'short_url': 'https://www.youtube.com/watch?v=vBwD30q9Q_I',
+            # first fill this param with long url value. then, after creating raw in db - create this value using row`s id in db
+        }
+
+        new_url_serializer = UrlSerializer(data=data)
+        new_url_serializer.is_valid()
+        new_url_serializer.create(validated_data=new_url_serializer.validated_data)
+        new_url_db = ShortedLink.objects.get(long_url=data['long_url'])
+        new_url_db.cut(urlid=new_url_db.id)
+        new_url_db.users.add(request.user)
+        new_url_db.save()
+        return Response({'url': 'data'})
