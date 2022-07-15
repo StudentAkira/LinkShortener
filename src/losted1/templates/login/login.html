@@ -6,7 +6,7 @@
 </head>
 <body>
     <form action="" method="POST">
-        {{ csrf }}
+        {% csrf_token %}
         <h1>LOGIN : </h1><br>
         <input type="text" name="username"><br><br>
         <input type="password" name="password"><br><br>

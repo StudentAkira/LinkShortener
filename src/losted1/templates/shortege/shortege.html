@@ -9,7 +9,7 @@
     <img src={{ photo }}>
     <h1>I am {{ username }}</h1><br>
     <form action="" method="POST" >
-        {{ csrf }}
+        {% csrf_token %}
         Long URL : <input name="long_url" type="url">
         <button type="submit">Cut this</button>
         {% if short_url %}
