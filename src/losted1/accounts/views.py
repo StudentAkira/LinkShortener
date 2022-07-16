@@ -74,6 +74,7 @@ class ShortegeView(APIView):
     def post(self, request):
         try:
             url = ShortedLink.objects.get(long_url=request.POST.dict()['long_url'])
+            url.users.add(request.user)
             return render(request=request, template_name='shortege/shortege.html',
                           context={'username': request.user.username,
                                    'short_url': url.short_url,
