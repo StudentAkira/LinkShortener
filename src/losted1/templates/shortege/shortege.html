@@ -11,9 +11,12 @@
     <form action="" method="POST" >
         {% csrf_token %}
         Long URL : <input name="long_url" type="url">
-        <button type="submit">Cut this</button>
+        <button type="submit">Cut this</button><br><br>
+        {% if error_message %}
+            <h2>{{ error_message }}</h2>
+        {% endif %}
         {% if short_url %}
-        Short URL : {{ short_url }}
+        Short URL : <a href="{{ long_url }}">{{ short_url }}</a>
         {% endif %}
     </form>
 </body>

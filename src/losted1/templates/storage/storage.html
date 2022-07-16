@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Storage</title>
+</head>
+<body>
+    <h1>Urls of user : {{ username }}</h1>
+    {% for url in urls %}
+        Long url : <a href="{{url.long_url}}">{{url.long_url}}</a><br>
+        Short url : <a href="{{url.long_url}}">{{url.short_url}}</a><br>
+        <br>
+    {% endfor %}
+</body>
+</html>

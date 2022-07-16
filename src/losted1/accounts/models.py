@@ -11,7 +11,7 @@ class CustomUser(AbstractUser):
 class ShortedLink(models.Model):
     long_url = models.URLField(default=None)
     short_url = models.URLField(default=None)
-    users = models.ManyToManyField(CustomUser)
+    users = models.ManyToManyField(CustomUser, blank=True)
 
     def cut(self, urlid):
         self.short_url = 'http://shorted_url/'+encode_url(urlid)
