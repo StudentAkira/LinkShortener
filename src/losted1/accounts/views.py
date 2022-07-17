@@ -30,8 +30,8 @@ class LoginView(APIView):
 class LogoutView(APIView):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            return redirect('/shortege/')
+        if not request.user.is_authenticated:
+            return redirect('/login/')
         logout(request=request)
         return redirect('/login/')
 
