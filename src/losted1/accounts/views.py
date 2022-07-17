@@ -30,6 +30,8 @@ class LoginView(APIView):
 class LogoutView(APIView):
 
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('/shortege/')
         logout(request=request)
         return redirect('/login/')
 
@@ -58,6 +60,8 @@ class ShortegeView(APIView):
 
     def get(self, request):
         user = request.user
+        if not request.user.is_authenticated:
+            return redirect('/login/')
         try:
             social = user.social_auth.get(provider='vk-oauth2')
             access_token = social.extra_data['access_token']
