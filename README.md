@@ -1,2 +1,2 @@
 # losted1
-Link Shortener
+Link Shortener app
